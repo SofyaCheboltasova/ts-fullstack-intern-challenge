@@ -1,5 +1,6 @@
 import { DataSource } from "typeorm";
-// import Customer from "./entity/Customer";
+import User from "./entity/User";
+import Like from "./entity/Like";
 
 const AppDataSource = new DataSource({
   type: "postgres",
@@ -10,7 +11,7 @@ const AppDataSource = new DataSource({
   database: "finam",
   synchronize: true,
   logging: true,
-  entities: [],
+  entities: [User, Like],
   subscribers: [],
   migrations: [],
 });
