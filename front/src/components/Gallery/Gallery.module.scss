@@ -1,0 +1,5 @@
+.gallery {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(22.5rem, 1fr));
+
+}
