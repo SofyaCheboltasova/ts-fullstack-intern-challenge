@@ -20,9 +20,34 @@ export default class UserService {
     return crypto.createHash("sha256").update(`${id}${salt}`).digest("hex");
   }
 
+  public async getUser(userDto: UserDto): Promise<User | null> {
+    const existingUser = await this.repository.findOne({
+      where: { login: userDto.login },
+    });
+
+    return existingUser;
+  }
+
+  public async checkPassword(userDto: UserDto): Promise<boolean> {
+    const existingUser = await this.getUser(userDto);
+    return existingUser.password === userDto.password;
+  }
+
   public async postUser(
     userDto: UserDto
   ): Promise<{ user: User; token: string }> {
+    const existingUser = await this.getUser(userDto);
+
+    if (existingUser) {
+      const isEqualPassword = await this.checkPassword(userDto);
+
+      if (isEqualPassword) {
+        return { user: existingUser, token: existingUser.token };
+      } else {
+        throw new Error("Неправильный пароль");
+      }
+    }
+
     const user = this.repository.create(userDto);
     const token = this.generateAuthToken(user.id);
     user.token = token;
@@ -32,4 +57,3 @@ export default class UserService {
     return { user: savedUser, token: token };
   }
 }
-
