@@ -12,7 +12,7 @@ export default class User {
   @Column({ type: "varchar", nullable: false })
   password: string;
 
-  @OneToMany(() => Like, (like) => like.user)
-  likes: Like[];
+  @Column({ type: "varchar", nullable: true, unique: true })
+  token?: string;
 }
 
