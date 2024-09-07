@@ -1,5 +1,7 @@
 import axios, { HttpStatusCode } from "axios";
 import CatData from "../types/catData";
+import UserType from "../types/userData";
+import { useAuth } from "../contexts/AuthContext";
 
 export async function fetchCats(page: number): Promise<CatData[] | undefined> {
   try {
@@ -11,7 +13,7 @@ export async function fetchCats(page: number): Promise<CatData[] | undefined> {
 }
 
 export interface PostResponse {
-  token?: string;
+  user?: UserType;
   error?: string;
 }
 
@@ -25,10 +27,30 @@ export async function createUser(
   });
 
   if (response.status === HttpStatusCode.Created) {
-    const token = response.headers["x-auth-token"];
-    return { token: token };
+    return response.data;
   }
 
+  return { error: response.data.error };
+}
+
+export async function addLike(cat_id: string) {
+  const { user } = useAuth();
+
+  const likeData = {
+    cat_id: cat_id,
+    user_id: user?.id,
+    created_at: new Date().toISOString(),
+  };
+  const response = await axios.post("http://localhost:8000/likes", likeData, {
+    headers: {
+      "Content-Type": "application/json",
+      "X-Auth-Token": localStorage.getItem("auth_token"),
+    },
+  });
+
+  if (response.status === HttpStatusCode.Created) {
+    return response.data;
+  }
   return { error: response.data.error };
 }
 

@@ -32,8 +32,8 @@ export default function AuthWindow() {
 
   async function handleLogin() {
     if (login && password) {
-      const { token, error } = await onLogin(login, password);
-      token && setDisplayLogin(false);
+      const { user, error } = await onLogin(login, password);
+      user && setDisplayLogin(false);
       error && setPasswordError(error);
     }
   }
