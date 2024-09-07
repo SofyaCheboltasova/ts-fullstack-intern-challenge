@@ -1,14 +1,11 @@
 import { useState } from "react";
 import Input from "../Input/Input";
 import style from "./AuthWindow.module.scss";
-import { createUser } from "../../api/api";
+import { useAuth } from "../../contexts/AuthContext";
 
-interface AuthWindowProps {
-  onLogin: (token: string) => void;
-  onClose: () => void;
-}
+export default function AuthWindow() {
+  const { onLogin, setDisplayLogin } = useAuth();
 
-export default function AuthWindow(props: AuthWindowProps) {
   const [login, setLogin] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
@@ -33,25 +30,20 @@ export default function AuthWindow(props: AuthWindowProps) {
     }
   }
 
-  async function handleButtonClick() {
+  async function handleLogin() {
     if (login && password) {
-      const { token, error } = await createUser(login, password);
-      console.error(error);
-
-      if (token) {
-        props.onLogin(token);
-        props.onClose();
-      }
-
-      if (error) {
-        setPasswordError(error);
-      }
+      const { token, error } = await onLogin(login, password);
+      token && setDisplayLogin(false);
+      error && setPasswordError(error);
     }
   }
 
   return (
     <>
-      <div className={style.background} onClick={props.onClose}></div>
+      <div
+        className={style.background}
+        onClick={() => setDisplayLogin(false)}
+      ></div>
 
       <div className={style.auth__wrapper}>
         <div>Авторизация</div>
@@ -74,7 +66,7 @@ export default function AuthWindow(props: AuthWindowProps) {
             <div className={style.auth__error}>{passwordError}</div>
           )}
         </div>
-        <button className={style.auth__button} onClick={handleButtonClick}>
+        <button className={style.auth__button} onClick={handleLogin}>
           Войти
         </button>
       </div>

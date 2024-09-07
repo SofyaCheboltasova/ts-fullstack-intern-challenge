@@ -1,19 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import Button from "../Button/Button";
 import style from "./Header.module.scss";
+import { useAuth } from "../../contexts/AuthContext";
 
-interface HeaderProps {
-  isAuthorized: boolean;
-  onLogin: () => void;
-  onLogout: () => void;
-}
-
-export default function Header({
-  isAuthorized,
-  onLogin,
-  onLogout,
-}: HeaderProps) {
+export default function Header() {
   const navigate = useNavigate();
+  const { isAuthorized, onLogout, setDisplayLogin } = useAuth();
 
   return (
     <header className={style.header}>
@@ -23,13 +15,15 @@ export default function Header({
           text={"Все котики"}
           onClick={() => navigate("/cats")}
         />
-        <Button onClick={() => navigate("/likes")} text={"Любимые котики"} />
+        {isAuthorized && (
+          <Button onClick={() => navigate("/likes")} text={"Любимые котики"} />
+        )}
       </div>
       <div className={style.header__login}>
         {isAuthorized ? (
           <Button onClick={onLogout} text="Выйти" />
         ) : (
-          <Button onClick={onLogin} text="Войти" />
+          <Button onClick={() => setDisplayLogin(true)} text="Войти" />
         )}
       </div>
     </header>
