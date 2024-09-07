@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { HttpStatusCode } from "axios";
 import CatData from "../types/catData";
 
 export async function fetchCats(page: number): Promise<CatData[] | undefined> {
@@ -10,20 +10,25 @@ export async function fetchCats(page: number): Promise<CatData[] | undefined> {
   }
 }
 
+export interface PostResponse {
+  token?: string;
+  error?: string;
+}
+
 export async function createUser(
   login: string,
   password: string
-): Promise<string | null> {
-  try {
-    const userData = { login: login, password: password };
-    const response = await axios.post("http://localhost:8000/user", userData, {
-      headers: { "Content-Type": "application/json" },
-    });
+): Promise<PostResponse> {
+  const userData = { login: login, password: password };
+  const response = await axios.post("http://localhost:8000/user", userData, {
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (response.status === HttpStatusCode.Created) {
     const token = response.headers["x-auth-token"];
-    return token;
-  } catch (err) {
-    console.error(err);
-    return null;
+    return { token: token };
   }
+
+  return { error: response.data.error };
 }
 

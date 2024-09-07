@@ -4,14 +4,14 @@ import style from "./Header.module.scss";
 
 interface HeaderProps {
   isAuthorized: boolean;
-  onLoginClick: () => void;
-  onLogoutClick: () => void;
+  onLogin: () => void;
+  onLogout: () => void;
 }
 
 export default function Header({
   isAuthorized,
-  onLoginClick,
-  onLogoutClick,
+  onLogin,
+  onLogout,
 }: HeaderProps) {
   const navigate = useNavigate();
 
@@ -27,9 +27,9 @@ export default function Header({
       </div>
       <div className={style.header__login}>
         {isAuthorized ? (
-          <Button onClick={onLogoutClick} text="Выйти" />
+          <Button onClick={onLogout} text="Выйти" />
         ) : (
-          <Button onClick={onLoginClick} text="Войти" />
+          <Button onClick={onLogin} text="Войти" />
         )}
       </div>
     </header>

@@ -1,9 +1,10 @@
 import { useState } from "react";
 import Input from "../Input/Input";
 import style from "./AuthWindow.module.scss";
+import { createUser } from "../../api/api";
 
 interface AuthWindowProps {
-  onLogin: (login: string, password: string) => void;
+  onLogin: (token: string) => void;
   onClose: () => void;
 }
 
@@ -34,8 +35,17 @@ export default function AuthWindow(props: AuthWindowProps) {
 
   async function handleButtonClick() {
     if (login && password) {
-      props.onClose();
-      props.onLogin(login, password);
+      const { token, error } = await createUser(login, password);
+      console.error(error);
+
+      if (token) {
+        props.onLogin(token);
+        props.onClose();
+      }
+
+      if (error) {
+        setPasswordError(error);
+      }
     }
   }
 

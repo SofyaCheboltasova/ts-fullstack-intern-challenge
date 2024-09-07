@@ -1,59 +1,43 @@
 import { useEffect, useRef, useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import style from "./App.module.scss";
 import Gallery from "./components/Gallery/Gallery";
 import Header from "./components/Header/Header";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AuthWindow from "./components/AuthWindow/AuthWindow";
-import { createUser } from "./api/api";
 
 function App() {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [, setToken] = useState<string | null>(null);
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
   const [displayLogin, setDisplayLogin] = useState<boolean>(false);
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem("auth_token")
+  );
 
   useEffect(() => {
-    const token = localStorage.getItem("auth_token");
     if (token) {
-      setToken(token);
-      setIsAuthorized(true);
-    }
-  }, []);
-
-  async function onLogin(login: string, password: string) {
-    const token = await createUser(login, password);
-
-    if (token) {
-      setToken(token);
       setIsAuthorized(true);
       localStorage.setItem("auth_token", token);
+    } else {
+      setIsAuthorized(false);
+      localStorage.removeItem("auth_token");
     }
-  }
-
-  function onLoginClick() {
-    setDisplayLogin(true);
-  }
-
-  function onLogoutClick() {
-    setToken(null);
-    setIsAuthorized(false);
-    localStorage.removeItem("auth_token");
-  }
-
-  function onClose() {
-    setDisplayLogin(false);
-  }
+  }, [token]);
 
   return (
     <BrowserRouter>
       <section className={style.app} ref={scrollRef}>
         <Header
           isAuthorized={isAuthorized}
-          onLoginClick={onLoginClick}
-          onLogoutClick={onLogoutClick}
+          onLogout={() => setToken(null)}
+          onLogin={() => setDisplayLogin(true)}
         />
 
-        {displayLogin && <AuthWindow onLogin={onLogin} onClose={onClose} />}
+        {displayLogin && (
+          <AuthWindow
+            onLogin={(token) => setToken(token)}
+            onClose={() => setDisplayLogin(false)}
+          />
+        )}
 
         <Routes>
           <Route path="/" element={<Navigate to="/cats" />} />
