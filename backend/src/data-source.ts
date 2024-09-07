@@ -8,7 +8,7 @@ const AppDataSource = new DataSource({
   port: 5432,
   username: "postgres",
   password: "Sofya2002",
-  database: "finam",
+  database: "pinterest",
   synchronize: true,
   logging: true,
   entities: [User, Like],

@@ -1,14 +1,16 @@
 import "reflect-metadata";
-import { DataSource } from "typeorm";
 import AppDataSource from "./src/data-source";
-import ServerClass from "./src/server";
+import createDatabase from "./src/database";
 
-async function app() {
-  const server = new ServerClass();
-  server.start();
+export default async function initDatabase() {
+  try {
+    await createDatabase();
+    await AppDataSource.initialize();
+    await AppDataSource.runMigrations();
 
-  const database: DataSource = await AppDataSource.initialize();
+    console.log("Database was created and initialized");
+  } catch (error) {
+    console.error("Error while creating database:", error);
+  }
 }
-
-app();
 
