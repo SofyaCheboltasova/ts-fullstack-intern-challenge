@@ -10,7 +10,7 @@ export default class LikeService {
     this.repository = dataSource.getRepository(Like);
   }
 
-  public async getLikes(user_id: string): Promise<Like[] | []> {
+  public async getLikes(user_id: number): Promise<Like[] | []> {
     const likes = await this.repository.find({ where: { user_id } });
     return likes;
   }

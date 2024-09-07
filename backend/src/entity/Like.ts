@@ -18,8 +18,8 @@ export default class Like {
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   created_at: Date;
 
-  @Column({ type: "varchar", nullable: false })
-  user_id: string;
+  @Column({ type: "int", nullable: false })
+  user_id: number;
 
   @ManyToOne(() => User, { onDelete: "CASCADE" })
   @JoinColumn({ name: "user_id" })

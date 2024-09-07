@@ -20,7 +20,7 @@ export default class UserService {
     return crypto.createHash("sha256").update(`${id}${salt}`).digest("hex");
   }
 
-  public async getUser(userDto: UserDto): Promise<User | null> {
+  private async getUserByLogin(userDto: UserDto): Promise<User | null> {
     const existingUser = await this.repository.findOne({
       where: { login: userDto.login },
     });
@@ -28,15 +28,15 @@ export default class UserService {
     return existingUser;
   }
 
-  public async checkPassword(userDto: UserDto): Promise<boolean> {
-    const existingUser = await this.getUser(userDto);
+  private async checkPassword(userDto: UserDto): Promise<boolean> {
+    const existingUser = await this.getUserByLogin(userDto);
     return existingUser.password === userDto.password;
   }
 
   public async postUser(
     userDto: UserDto
   ): Promise<{ user: User; token: string }> {
-    const existingUser = await this.getUser(userDto);
+    const existingUser = await this.getUserByLogin(userDto);
 
     if (existingUser) {
       const isEqualPassword = await this.checkPassword(userDto);
