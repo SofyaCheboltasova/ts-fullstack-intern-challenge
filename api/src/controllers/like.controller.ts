@@ -41,8 +41,8 @@ export default class LikeController {
 
   @Get()
   async get(@Req() req: Request, @Res() res: Response) {
-    const authToken = req.headers['x-auth-token'][0];
-    const likes = this.likeService.getLikes(authToken);
+    // const authToken = req.headers['x-auth-token'][0];
+    const likes = this.likeService.getLikes(1);
     return res.status(HttpStatus.OK).json(likes);
   }
 }

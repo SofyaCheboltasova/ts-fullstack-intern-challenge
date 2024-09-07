@@ -5,7 +5,7 @@ export default class LikeDto {
   cat_id: string;
 
   @ApiProperty({ description: 'Пользователь, который поставил лайк' })
-  user_id: string;
+  user_id: number;
 
   @ApiPropertyOptional({ description: 'Время создания лайка' })
   created_at: Date;
