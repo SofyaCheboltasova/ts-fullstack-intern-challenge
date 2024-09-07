@@ -18,9 +18,14 @@ export default class UserController {
   async create(@Body() userDto: UserDto, @Res() res: Response) {
     try {
       const { user, token } = await this.userService.postUser(userDto);
-      res.setHeader('X-Auth-Token', token);
-      return res.status(HttpStatus.CREATED).json(user);
+      return res
+        .setHeader('X-Auth-Token', token)
+        .status(HttpStatus.CREATED)
+        .json(user);
     } catch (err) {
+      if (err.driverError.code === '23505') {
+        throw new HttpException('Login is already taken', HttpStatus.CONFLICT);
+      }
       throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
     }
   }
