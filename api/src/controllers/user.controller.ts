@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  HttpException,
-  HttpStatus,
-  Post,
-  Res,
-} from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 
 import UserDto from '../dto/user.dto';
@@ -23,10 +16,8 @@ export default class UserController {
         .status(HttpStatus.CREATED)
         .json(user);
     } catch (err) {
-      if (err.driverError.code === '23505') {
-        throw new HttpException('Login is already taken', HttpStatus.CONFLICT);
-      }
-      throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
+      console.error(err);
+      return res.status(HttpStatus.OK).json({ error: err.message });
     }
   }
 }
