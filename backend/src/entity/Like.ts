@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
 import User from "./User";
 
 @Entity()
@@ -9,10 +15,14 @@ export default class Like {
   @Column({ type: "varchar", nullable: false })
   cat_id: string;
 
-  @Column({ type: "varchar" })
+  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   created_at: Date;
 
-  @ManyToOne(() => User, (user) => user.likes, { onDelete: "CASCADE" })
+  @Column({ type: "varchar", nullable: false })
+  user_id: string;
+
+  @ManyToOne(() => User, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "user_id" })
   user: User;
 }
 
