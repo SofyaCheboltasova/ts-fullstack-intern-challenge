@@ -1,20 +1,21 @@
 .gallery {
-  display: flex;
-  flex-direction: column;
-  gap: 48px;
-  text-align: center;
+	display: flex;
+	flex-direction: column;
+	gap: 48px;
+	text-align: center;
+
+	* {
+		font-size: 1.4rem;
+	}
 }
 
 .gallery__blocks {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(22.5rem, 1fr));
-  gap: 48px;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(22.5rem, 1fr));
+	justify-items: center;
+	gap: 48px;
 
-  position: relative;
-  top: 52px;
-  margin-bottom: 48px;
-}
-
-.gallery__loader {
-  font-size: 1.4rem;
+	position: relative;
+	top: 52px;
+	margin-bottom: 48px;
 }

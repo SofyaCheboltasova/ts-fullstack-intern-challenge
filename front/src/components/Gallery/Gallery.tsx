@@ -1,18 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
+import style from "./Gallery.module.scss";
+
 import { fetchCats } from "../../api/api";
 import CatData from "../../types/catData";
-import style from "./Gallery.module.scss";
 import Block from "../Block/Block";
 
 interface GalleryProps {
-  scrollRef: React.RefObject<HTMLDivElement>;
+  scrollRef: RefObject<HTMLDivElement>;
 }
 
 export default function Gallery({ scrollRef }: GalleryProps) {
   const [allCats, setCats] = useState<CatData[]>([]);
   const [page, setPage] = useState<number>(1);
   const [hasMoreCats, setHasMoreCats] = useState<boolean>(true);
-  const [, setEmptyGallery] = useState<boolean>(false);
   const loaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,16 +35,13 @@ export default function Gallery({ scrollRef }: GalleryProps) {
     };
   }, [hasMoreCats, scrollRef]);
 
-  async function getCats() {
+  async function getCats(): Promise<void> {
     const cats: CatData[] | undefined = await fetchCats(page);
 
-    if (!cats) {
-      setEmptyGallery(true);
-      return;
+    if (cats) {
+      setCats((prevCats) => [...prevCats, ...cats]);
     }
-    setCats((prevCats) => [...prevCats, ...cats]);
-
-    if (cats.length < 100) {
+    if (cats && cats.length < 100) {
       setHasMoreCats(false);
     }
   }
@@ -53,14 +50,10 @@ export default function Gallery({ scrollRef }: GalleryProps) {
     <section className={style.gallery}>
       <div className={style.gallery__blocks}>
         {allCats.map((cat, index) => {
-          return <Block key={index} imgSrc={cat.url} />;
+          return <Block key={index} blockData={cat} />;
         })}
       </div>
-      {hasMoreCats && (
-        <div ref={loaderRef} className={style.gallery__loader}>
-          ... Загружаем еще котиков ...
-        </div>
-      )}
+      {hasMoreCats && <div ref={loaderRef}>... Загружаем еще котиков ...</div>}
     </section>
   );
 }
