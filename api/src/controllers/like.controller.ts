@@ -9,20 +9,31 @@ import {
   Post,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 
 import LikeDto from '../dto/like.dto';
 import LikeService from '../../../backend/src/service/likeService';
+import AuthGuard from 'src/guards/auth.guard';
 
 @Controller('likes')
+@UseGuards(AuthGuard)
 export default class LikeController {
   constructor(private readonly likeService: LikeService) {}
 
   @Post()
-  async create(@Body() likeDto: LikeDto, @Res() res: Response) {
+  async create(
+    @Body() likeDto: LikeDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
     try {
-      const like = await this.likeService.postLike(likeDto);
+      const userId = req['userId'];
+      const like = await this.likeService.postLike({
+        ...likeDto,
+        user_id: userId,
+      });
       return res.status(HttpStatus.CREATED).json(like);
     } catch (err) {
       throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
@@ -30,10 +41,10 @@ export default class LikeController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') likeId: number, @Res() res: Response) {
+  async delete(@Param('id') catId: string, @Res() res: Response) {
     try {
-      await this.likeService.deleteLike(likeId);
-      return res.status(HttpStatus.OK);
+      await this.likeService.deleteLike(catId);
+      return res.status(HttpStatus.OK).send();
     } catch (err) {
       throw new HttpException('Like not found', HttpStatus.NOT_FOUND);
     }
@@ -41,8 +52,8 @@ export default class LikeController {
 
   @Get()
   async get(@Req() req: Request, @Res() res: Response) {
-    // const authToken = req.headers['x-auth-token'][0];
-    const likes = this.likeService.getLikes(1);
+    const userId = req['userId'];
+    const likes = this.likeService.getLikes(userId);
     return res.status(HttpStatus.OK).json(likes);
   }
 }
