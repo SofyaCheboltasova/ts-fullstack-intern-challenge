@@ -1,12 +1,19 @@
-import { createContext, useState, ReactNode, useContext } from "react";
-import { createUser, PostResponse } from "../api/api";
-import UserType from "../types/userData";
+import {
+  createContext,
+  useState,
+  ReactNode,
+  useContext,
+  useEffect,
+} from "react";
+import { createUser, getUser } from "../api/userApi";
+import UserType from "../types/UserType";
+import { UserResponse } from "../types/Response";
 
 interface AuthContextType {
   user: UserType | null;
   displayLogin: boolean;
   isAuthorized: boolean;
-  onLogin: (login: string, password: string) => Promise<PostResponse>;
+  onLogin: (login: string, password: string) => Promise<UserResponse>;
   onLogout: () => void;
   setDisplayLogin: (data: boolean) => void;
 }
@@ -18,15 +25,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [displayLogin, setDisplayLogin] = useState<boolean>(false);
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
 
+  useEffect(() => {
+    async function checkUserExists() {
+      const { user, error }: UserResponse = await getUser();
+      user && onLogin(user.login, user.password);
+      error && onLogout();
+    }
+
+    checkUserExists();
+  }, []);
+
   async function onLogin(
     login: string,
     password: string
-  ): Promise<PostResponse> {
-    const response: PostResponse = await createUser(login, password);
+  ): Promise<UserResponse> {
+    const response: UserResponse = await createUser(login, password);
     if (response.user) {
       setUser(user);
       setIsAuthorized(true);
-      localStorage.setItem("auth_token", response.user.token);
     }
     return response;
   }
@@ -34,6 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   function onLogout() {
     setUser(null);
     setIsAuthorized(false);
+    localStorage.removeItem("user_id");
     localStorage.removeItem("auth_token");
   }
 
