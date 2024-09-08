@@ -2,12 +2,13 @@ import { RefObject, useEffect, useRef, useState } from "react";
 import style from "./Gallery.module.scss";
 
 import { fetchCatImage, fetchCats } from "../../api/catsApi";
-import { getLikes } from "../../api/likeApi";
 
 import Block from "../Block/Block";
 import BlockType from "../../types/BlockType";
-import CatType from "../../types/CatType";
 import { useAuth } from "../../contexts/AuthContext";
+import useInfiniteScroll from "../../hooks/useInfiniteScroll";
+import useLikes from "../../hooks/useLikes";
+import { getLikes } from "../../api/likeApi";
 
 interface GalleryProps {
   type: "all" | "likes";
@@ -17,101 +18,76 @@ interface GalleryProps {
 export default function Gallery({ type, scrollRef }: GalleryProps) {
   const [blocks, setBlocks] = useState<BlockType[]>([]);
   const [page, setPage] = useState<number>(1);
-  const [hasMoreCats, setHasMoreCats] = useState<boolean>(true);
+  const [hasMore, setHasMore] = useState<boolean>(true);
   const loaderRef = useRef<HTMLDivElement>(null);
   const { isAuthorized } = useAuth();
 
+  const likes = useLikes(type);
+  useInfiniteScroll(scrollRef, loaderRef, hasMore, setPage);
+
   useEffect(() => {
-    getCats();
+    loadBlocks();
   }, [page, type]);
 
   useEffect(() => {
     setBlocks([]);
   }, [type]);
 
-  useEffect(() => {
-    const handleScroll = async () => {
-      if (loaderRef.current) {
-        const { bottom } = loaderRef.current.getBoundingClientRect();
-        if (bottom <= window.innerHeight && hasMoreCats) {
-          setPage((prevPage) => prevPage + 1);
-        }
-      }
-    };
-    const container = scrollRef.current;
-    container && container.addEventListener("scroll", handleScroll);
-    return () => {
-      container && container.removeEventListener("scroll", handleScroll);
-    };
-  }, [hasMoreCats, scrollRef]);
-
-  function handleLikeClick(catId: string) {
+  function onLikeClick(catId: string) {
     if (type === "likes") {
-      setBlocks((prevBlocks) =>
-        prevBlocks.filter((block) => block.id !== catId)
-      );
+      setBlocks((blocks) => blocks.filter((block) => block.id !== catId));
     }
   }
 
-  function getBlock(id: string, url: string, isLiked: boolean) {
-    let newBlock: BlockType = { id, url, isLiked };
-    return newBlock;
+  function setNewBlock(id: string, url: string, isLiked: boolean) {
+    const block: BlockType = { id, url, isLiked };
+    setBlocks((blocks) => [...blocks, block]);
   }
 
-  async function getCats(): Promise<void> {
-    const cats: CatType[] = await fetchCats(page);
+  async function fetchBlocks<T>(
+    fetchCallback: () => Promise<T[]>
+  ): Promise<T[]> {
+    const data = await fetchCallback();
+    if (!data.length) {
+      setHasMore(false);
+      return [];
+    }
+    setHasMore(data.length > 90);
+    return data;
+  }
 
+  async function loadBlocks(): Promise<void> {
     if (type === "all") {
-      if (!cats.length) {
-        setHasMoreCats(false);
-        return;
-      }
-      setHasMoreCats(cats.length > 100);
-
+      const cats = await fetchBlocks(() => fetchCats(page));
       for (const cat of cats) {
-        let isLiked = false;
-        if (isAuthorized) {
-          const likes = await getLikes();
-          isLiked = isAuthorized && likes.some((l) => l.cat_id === cat.id);
-        }
-        const block = getBlock(cat.id, cat.url, isLiked);
-        setBlocks((blocks) => [...blocks, block]);
+        const isLiked = isAuthorized && likes.some((l) => l.cat_id === cat.id);
+        setNewBlock(cat.id, cat.url, isLiked);
       }
     }
 
     if (type === "likes") {
-      const likes = await getLikes();
-
-      if (!likes.length) {
-        setHasMoreCats(false);
-        return;
-      }
-      setHasMoreCats(likes.length > 100);
-
+      const likes = await fetchBlocks(getLikes);
       for (const like of likes) {
-        const url: string = await fetchCatImage(like.cat_id);
-        const block = getBlock(like.cat_id, url, true);
-        setBlocks((blocks) => [...blocks, block]);
+        const url = await fetchCatImage(like.cat_id);
+        setNewBlock(like.cat_id, url, true);
       }
     }
+  }
+
+  function getBlockComponent(i: number, block: BlockType) {
+    return (
+      <Block key={i} data={block} onLikeClick={() => onLikeClick(block.id)} />
+    );
   }
 
   return (
     <section className={style.gallery}>
       <div className={style.gallery__blocks}>
-        {blocks.map((block, index) => {
-          return (
-            <Block
-              key={index}
-              data={block}
-              onLikeClick={() => handleLikeClick(block.id)}
-            />
-          );
-        })}
+        {blocks.map((block, i) => getBlockComponent(i, block))}
       </div>
-      {hasMoreCats ? (
+      {hasMore ? (
         <div ref={loaderRef} className={style.loader}>
-          ... Загружаем еще котиков ...
+          Загружаем еще котиков...
         </div>
       ) : (
         <div className={style.loader}>Извините, котиков больше нет :(</div>
