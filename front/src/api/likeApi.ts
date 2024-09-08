@@ -1,5 +1,6 @@
 import axios, { HttpStatusCode } from "axios";
 import { Response, LikeResponse } from "../types/Response";
+import LikeType from "../types/LikeType";
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:8000",
@@ -34,12 +35,12 @@ export async function deleteLike(catId: string): Promise<void | Response> {
   }
 }
 
-export async function getLikes(): Promise<LikeResponse[] | Response> {
+export async function getLikes(): Promise<LikeType[]> {
   setAuthHeaders();
-  const response = await axiosInstance.post("likes");
+  const response = await axiosInstance.get("likes");
   if (response.status === HttpStatusCode.Ok) {
     return response.data;
   }
-  return { error: response.data.error };
+  return [];
 }
 
