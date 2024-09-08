@@ -1,4 +1,4 @@
-export default interface CatData {
+export default interface CatType {
   breeds: Array<Object>;
   id: string;
   url: string;
