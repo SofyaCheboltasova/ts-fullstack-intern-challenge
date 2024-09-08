@@ -1,17 +1,21 @@
 import { useState } from "react";
 import style from "./Block.module.scss";
 import Like from "../Like/Like";
-import CatData from "../../types/CatType";
+import BlockType from "../../types/BlockType";
 
 interface BlockProps {
-  blockData: CatData;
-  isLiked?: boolean;
+  data: BlockType;
+  onLikeClick: (value: boolean) => void;
 }
 
-export default function Block(props: BlockProps) {
-  const { id, url } = props.blockData;
-  const [isLiked, setIsLiked] = useState(false);
+export default function Block({ data, onLikeClick }: BlockProps) {
+  const [isLiked, setIsLiked] = useState(data.isLiked);
   const [isHovered, setIsHovered] = useState(false);
+
+  function onClick(value: boolean) {
+    setIsLiked(value);
+    onLikeClick(true);
+  }
 
   return (
     <div
@@ -20,11 +24,11 @@ export default function Block(props: BlockProps) {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className={style.image__wrapper}>
-        <img className={style.image} src={url} alt="Cat image" />
+        <img className={style.image} src={data.url} alt="Cat image" />
       </div>
       {isHovered && (
         <div className={style.block__like}>
-          <Like blockId={id} isLiked={isLiked} setIsLiked={setIsLiked} />
+          <Like blockId={data.id} isLiked={isLiked} setIsLiked={onClick} />
         </div>
       )}
     </div>
