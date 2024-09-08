@@ -2,13 +2,17 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../Button/Button";
 import style from "./Header.module.scss";
 import { useAuth } from "../../contexts/AuthContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isClicked, setIsClicked] = useState<string>(location.pathname);
   const { isAuthorized, onLogout, setDisplayLogin } = useAuth();
+
+  useEffect(() => {
+    handleNavigate(location.pathname);
+  }, [location.pathname]);
 
   function handleNavigate(path: string) {
     navigate(path);
