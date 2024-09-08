@@ -8,6 +8,7 @@ import {
 import { createUser, getUser } from "../api/userApi";
 import UserType from "../types/UserType";
 import { UserResponse } from "../types/Response";
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
   user: UserType | null;
@@ -24,6 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserType | null>(null);
   const [displayLogin, setDisplayLogin] = useState<boolean>(false);
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function checkUserExists() {
@@ -52,6 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAuthorized(false);
     localStorage.removeItem("user_id");
     localStorage.removeItem("auth_token");
+    navigate("/");
   }
 
   return (

@@ -1,29 +1,45 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../Button/Button";
 import style from "./Header.module.scss";
 import { useAuth } from "../../contexts/AuthContext";
+import { useState } from "react";
 
 export default function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isClicked, setIsClicked] = useState<string>(location.pathname);
   const { isAuthorized, onLogout, setDisplayLogin } = useAuth();
+
+  function handleNavigate(path: string) {
+    navigate(path);
+    setIsClicked(path);
+  }
 
   return (
     <header className={style.header}>
       <div className={style.header__links}>
         <Button
-          isClicked
           text={"Все котики"}
-          onClick={() => navigate("/cats")}
+          isClicked={isClicked === "/cats"}
+          onClick={() => handleNavigate("/cats")}
         />
         {isAuthorized && (
-          <Button onClick={() => navigate("/likes")} text={"Любимые котики"} />
+          <Button
+            text={"Любимые котики"}
+            isClicked={isClicked === "/likes"}
+            onClick={() => handleNavigate("/likes")}
+          />
         )}
       </div>
       <div className={style.header__login}>
         {isAuthorized ? (
-          <Button onClick={onLogout} text="Выйти" />
+          <Button text="Выйти" onClick={onLogout} isClicked={false} />
         ) : (
-          <Button onClick={() => setDisplayLogin(true)} text="Войти" />
+          <Button
+            text="Войти"
+            isClicked={false}
+            onClick={() => setDisplayLogin(true)}
+          />
         )}
       </div>
     </header>
