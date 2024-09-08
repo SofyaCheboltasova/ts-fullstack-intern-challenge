@@ -15,45 +15,46 @@ export default class UserService {
   private generateSalt(length: number): string {
     return crypto.randomBytes(length).toString("hex");
   }
-  private generateAuthToken(id: number): string {
-    const salt = this.generateSalt(16);
-    return crypto.createHash("sha256").update(`${id}${salt}`).digest("hex");
+
+  private generateAuthToken(login: string, salt: string): string {
+    return crypto.createHash("sha256").update(`${login}${salt}`).digest("hex");
   }
 
-  private async getUserByLogin(userDto: UserDto): Promise<User | null> {
-    const existingUser = await this.repository.findOne({
-      where: { login: userDto.login },
-    });
+  public async compareTokens(id: number, token: string): Promise<boolean> {
+    const user = await this.repository.findOne({ where: { id } });
+    if (!user) return false;
 
-    return existingUser;
+    const userToken = this.generateAuthToken(user.login, user.salt);
+    return userToken === token;
   }
 
-  private async checkPassword(userDto: UserDto): Promise<boolean> {
-    const existingUser = await this.getUserByLogin(userDto);
-    return existingUser.password === userDto.password;
+  public async getUser(id: number): Promise<User> {
+    const userExists = await this.repository.findOne({ where: { id } });
+
+    if (!userExists) {
+      throw new Error("Пользователя не существует");
+    }
+    return userExists;
   }
 
-  public async postUser(
-    userDto: UserDto
-  ): Promise<{ user: User; token: string }> {
-    const existingUser = await this.getUserByLogin(userDto);
+  public async postUser(user: UserDto): Promise<{ user: User; token: string }> {
+    const { login, password } = user;
+    const userExists = await this.repository.findOne({ where: { login } });
 
-    if (existingUser) {
-      const isEqualPassword = await this.checkPassword(userDto);
-
-      if (isEqualPassword) {
-        return { user: existingUser, token: existingUser.token };
-      } else {
-        throw new Error("Неправильный пароль");
-      }
+    if (!userExists) {
+      const salt = this.generateSalt(16);
+      const token = this.generateAuthToken(login, salt);
+      const userWithSalt = this.repository.create({ ...user, salt: salt });
+      const newUser = await this.repository.save(userWithSalt);
+      return { user: newUser, token: token };
     }
 
-    const user = this.repository.create(userDto);
-    const token = this.generateAuthToken(user.id);
-    user.token = token;
-
-    const savedUser = await this.repository.save(user);
-
-    return { user: savedUser, token: token };
+    const isEqualPassword = userExists.password === password;
+    if (isEqualPassword) {
+      const token = this.generateAuthToken(userExists.login, userExists.salt);
+      return { user: userExists, token: token };
+    } else {
+      throw new Error("Неправильный пароль");
+    }
   }
 }
