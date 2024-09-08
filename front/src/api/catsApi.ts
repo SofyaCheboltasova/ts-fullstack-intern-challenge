@@ -1,11 +1,7 @@
 import axios, { HttpStatusCode } from "axios";
 import CatType from "../types/CatType";
 import defaultImg from "../assets/images/failed-img.png";
-
-const axiosInstance = axios.create({
-  baseURL: "http://localhost:8000",
-  headers: { "Content-Type": "application/json" },
-});
+import { axiosInstance } from "./api";
 
 export async function fetchCats(page: number): Promise<CatType[]> {
   const response = await axiosInstance.get(`/cats?page=${page}`);

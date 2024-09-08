@@ -1,18 +1,7 @@
-import axios, { HttpStatusCode } from "axios";
+import { HttpStatusCode } from "axios";
 import { Response, LikeResponse } from "../types/Response";
 import LikeType from "../types/LikeType";
-
-const axiosInstance = axios.create({
-  baseURL: "http://localhost:8000",
-  headers: { "Content-Type": "application/json" },
-});
-
-function setAuthHeaders() {
-  axiosInstance.defaults.headers[
-    "Authorization"
-  ] = `Bearer ${localStorage.getItem("auth_token")}`;
-  axiosInstance.defaults.headers["X-User-Id"] = localStorage.getItem("user_id");
-}
+import { setAuthHeaders, axiosInstance } from "./api";
 
 export async function addLike(catId: string): Promise<LikeResponse> {
   setAuthHeaders();
