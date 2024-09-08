@@ -3,16 +3,17 @@ import style from "./Button.module.scss";
 interface ButtonProps {
   text: string;
   onClick: () => void;
-  isClicked?: boolean;
+  isClicked: boolean;
 }
 
 export default function Button(props: ButtonProps) {
+  const { text, onClick, isClicked } = props;
   return (
     <div
-      onClick={props.onClick}
-      className={`${style.button} ${props.isClicked && style.clicked}`}
+      onClick={onClick}
+      className={`${style.button} ${isClicked && style.clicked}`}
     >
-      {props.text}
+      {text}
     </div>
   );
 }
