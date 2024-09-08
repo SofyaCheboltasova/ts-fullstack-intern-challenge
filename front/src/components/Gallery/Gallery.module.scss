@@ -1,8 +1,11 @@
 .gallery {
 	display: flex;
 	flex-direction: column;
+	justify-content: space-between;
 	gap: 48px;
 	text-align: center;
+
+	height: 100%;
 
 	* {
 		font-size: 1.4rem;
@@ -18,4 +21,9 @@
 	position: relative;
 	top: 52px;
 	margin-bottom: 48px;
+}
+
+.loader {
+	position: relative;
+	bottom: 0;
 }
