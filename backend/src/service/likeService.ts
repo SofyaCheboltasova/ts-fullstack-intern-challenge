@@ -20,8 +20,9 @@ export default class LikeService {
     return await this.repository.save(like);
   }
 
-  public async deleteLike(like_id: number): Promise<void> {
-    await this.repository.delete(like_id);
+  public async deleteLike(cat_id: string): Promise<void> {
+    const likeId = await this.repository.findOne({ where: { cat_id } });
+    await this.repository.delete(likeId);
   }
 }
 

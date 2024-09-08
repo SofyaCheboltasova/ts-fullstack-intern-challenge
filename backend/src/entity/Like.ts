@@ -12,7 +12,7 @@ export default class Like {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "varchar", nullable: false })
+  @Column({ type: "varchar", nullable: false, unique: true })
   cat_id: string;
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
