@@ -24,14 +24,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserType | null>(null);
   const [displayLogin, setDisplayLogin] = useState<boolean>(false);
-  const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
+  const [isAuthorized, setIsAuthorized] = useState<boolean>(
+    !!localStorage.getItem("auth_token")
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
     async function checkUserExists() {
       const { user, error }: UserResponse = await getUser();
-      user && onLogin(user.login, user.password);
       error && onLogout();
+
+      if (user) {
+        setUser(user);
+        setIsAuthorized(true);
+      }
     }
 
     checkUserExists();
