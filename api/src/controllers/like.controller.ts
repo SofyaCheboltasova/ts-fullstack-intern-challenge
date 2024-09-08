@@ -53,7 +53,7 @@ export default class LikeController {
   @Get()
   async get(@Req() req: Request, @Res() res: Response) {
     const userId = req['userId'];
-    const likes = this.likeService.getLikes(userId);
+    const likes = await this.likeService.getLikes(userId);
     return res.status(HttpStatus.OK).json(likes);
   }
 }
