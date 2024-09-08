@@ -20,9 +20,7 @@ export default class CatController {
       const response = await axios.get(
         `https://api.thecatapi.com/v1/images/search?page=${page}&limit=100`,
         {
-          headers: {
-            'x-api-key': this.API_KEY,
-          },
+          headers: { 'x-api-key': this.API_KEY },
         },
       );
       return res.status(HttpStatus.OK).json(response.data);

@@ -1,8 +1,18 @@
-import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Response } from 'express';
 
 import UserDto from '../dto/user.dto';
 import UserService from '../../../backend/src/service/userService';
+import AuthGuard from 'src/guards/auth.guard';
 
 @Controller('user')
 export default class UserController {
@@ -16,8 +26,19 @@ export default class UserController {
         .status(HttpStatus.CREATED)
         .json(user);
     } catch (err) {
-      console.error(err);
       return res.status(HttpStatus.OK).json({ error: err.message });
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Get()
+  async get(@Req() req: Request, @Res() res: Response) {
+    const userId = req['userId'];
+    try {
+      const likes = await this.userService.getUser(userId);
+      return res.status(HttpStatus.OK).json(likes);
+    } catch (err) {
+      return res.status(HttpStatus.NOT_FOUND).json({ error: err.message });
     }
   }
 }
