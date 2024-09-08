@@ -1,8 +1,7 @@
 import { useState } from "react";
 import style from "./Block.module.scss";
 import Like from "../Like/Like";
-import { useAuth } from "../../contexts/AuthContext";
-import CatData from "../../types/catData";
+import CatData from "../../types/CatType";
 
 interface BlockProps {
   blockData: CatData;
@@ -10,20 +9,9 @@ interface BlockProps {
 }
 
 export default function Block(props: BlockProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  const { id, url } = props.blockData;
   const [isLiked, setIsLiked] = useState(false);
-  const { isAuthorized, setDisplayLogin } = useAuth();
-
-  function onLikeClick() {
-    if (isAuthorized) {
-      setIsLiked(true);
-
-      // Запрос к апи
-    } else {
-      setDisplayLogin(true);
-      setIsLiked(true);
-    }
-  }
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <div
@@ -32,15 +20,11 @@ export default function Block(props: BlockProps) {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className={style.image__wrapper}>
-        <img
-          className={style.image}
-          src={props.blockData.url}
-          alt="Cat image"
-        />
+        <img className={style.image} src={url} alt="Cat image" />
       </div>
       {isHovered && (
         <div className={style.block__like}>
-          <Like onClick={onLikeClick} isLiked={isLiked} />
+          <Like blockId={id} isLiked={isLiked} setIsLiked={setIsLiked} />
         </div>
       )}
     </div>
