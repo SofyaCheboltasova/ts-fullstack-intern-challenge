@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 services:
   proxy:
     container_name: cat-pinterest-proxy
@@ -28,6 +28,8 @@ services:
     depends_on:
       cat-pinterest-api-pg:
         condition: service_healthy
+    ports:
+      - "8000:8000"
 
   cat-pinterest-front:
     container_name: cat-pinterest-front
@@ -38,6 +40,8 @@ services:
       - cat-pinterest-net
     environment:
       NODE_ENV: prod
+    ports:
+      - "3000:3000"
 
   cat-pinterest-api-pg:
     container_name: cat-pinterest-api-pg
@@ -50,7 +54,7 @@ services:
       POSTGRES_DB: support_lk_db
     #      PG_DATA: /var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 2s
       timeout: 5s
       retries: 10
