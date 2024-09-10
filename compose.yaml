@@ -20,7 +20,8 @@ services:
     container_name: cat-pinterest-api
     image: cat-pinterest-api
     build:
-      context: ./api/
+      context: .
+      dockerfile: /api/Dockerfile
     networks:
       - cat-pinterest-net
     environment:
@@ -28,8 +29,6 @@ services:
     depends_on:
       cat-pinterest-api-pg:
         condition: service_healthy
-    ports:
-      - "8000:8000"
 
   cat-pinterest-front:
     container_name: cat-pinterest-front
@@ -40,8 +39,6 @@ services:
       - cat-pinterest-net
     environment:
       NODE_ENV: prod
-    ports:
-      - "3000:3000"
 
   cat-pinterest-api-pg:
     container_name: cat-pinterest-api-pg

@@ -4,11 +4,11 @@ import Like from "./entity/Like";
 
 const AppDataSource = new DataSource({
   type: "postgres",
-  host: "localhost",
+  host: "cat-pinterest-api-pg",
   port: 5432,
   username: "postgres",
-  password: "Sofya2002",
-  database: "pinterest",
+  password: "1",
+  database: "support_lk_db",
   synchronize: true,
   logging: true,
   entities: [User, Like],
@@ -17,4 +17,3 @@ const AppDataSource = new DataSource({
 });
 
 export default AppDataSource;
-

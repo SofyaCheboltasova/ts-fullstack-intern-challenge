@@ -2,12 +2,12 @@ import { Client } from "pg";
 
 export default async function createDatabase() {
   const client = new Client({
-    host: "localhost",
+    host: "cat-pinterest-api-pg",
     port: 5432,
     user: "postgres",
-    password: "Sofya2002",
+    password: "1",
   });
-  const databaseName = "pinterest";
+  const databaseName = "support_lk_db";
 
   try {
     await client.connect();
@@ -25,4 +25,3 @@ export default async function createDatabase() {
     await client.end();
   }
 }
-
