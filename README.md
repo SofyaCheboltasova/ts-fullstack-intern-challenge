@@ -6,9 +6,9 @@
 4. Add `TypeormModule.forRoot()` for connecting to db
 5. Fix injections in constructors
 6. Add env vars for dev / prod
+7. Change dockerfiles && compose
 
-7. Moved API_KEY to github secrets
-8. Change dockerfiles && compose
+8. Moved API_KEY to github secrets
 9. Add loaders
 
 # Задание для TS FullStack стажёра
