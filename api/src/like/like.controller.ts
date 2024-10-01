@@ -5,6 +5,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Inject,
   Param,
   Post,
   Req,
@@ -13,14 +14,14 @@ import {
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 
-import LikeDto from '../dto/like.dto';
-import LikeService from '../../../backend/src/service/likeService';
-import AuthGuard from 'src/guards/auth.guard';
+import { LikeDto } from './dto/like.dto';
+import { LikeService } from './like.service';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('likes')
 @UseGuards(AuthGuard)
-export default class LikeController {
-  constructor(private readonly likeService: LikeService) {}
+export class LikeController {
+  constructor(@Inject(LikeService) private likeService: LikeService) {}
 
   @Post()
   async create(

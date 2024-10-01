@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export default class LikeDto {
+export class LikeDto {
   @ApiProperty({ description: 'Идентификатор котика из https://thecatapi.com' })
   cat_id: string;
 
