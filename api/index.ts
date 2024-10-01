@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './src/app.module';
 import { Client } from 'pg';
+import { env } from 'process';
+import { AppModule } from './src/app.module';
 
 async function bootstrap() {
   await createDatabase();
@@ -17,29 +18,21 @@ async function bootstrap() {
 bootstrap();
 
 async function createDatabase() {
-  // const client = new Client({
-  //   host: 'cat-pinterest-api-pg',
-  //   port: 5432,
-  //   user: 'postgres',
-  //   password: '1',
-  // });
   const client = new Client({
-    host: 'localhost',
+    host: env.POSTGRES_HOST,
     port: 5432,
-    user: 'postgres',
-    password: 'Sofya2002',
+    user: env.POSTGRES_USER,
+    password: env.POSTGRES_PASSWORD,
   });
-  const databaseName = 'support_lk_db';
-
   try {
     await client.connect();
     const result = await client.query(
-      `SELECT 1 FROM pg_database WHERE datname = '${databaseName}'`,
+      `SELECT 1 FROM pg_database WHERE datname = '${env.POSTGRES_DB}'`,
     );
 
     if (result.rowCount === 0) {
-      await client.query(`CREATE DATABASE ${databaseName}`);
-      console.log(`Database ${databaseName} created`);
+      await client.query(`CREATE DATABASE ${env.POSTGRES_DB}`);
+      console.log(`Database ${env.POSTGRES_DB} created`);
     }
   } catch (error) {
     console.error('Error while creating database:', error);
