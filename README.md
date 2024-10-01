@@ -9,6 +9,7 @@
 
 7. Moved API_KEY to github secrets
 8. Change dockerfiles && compose
+9. Add loaders
 
 # Задание для TS FullStack стажёра
 

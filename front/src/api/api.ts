@@ -4,7 +4,7 @@ const DEV_BASE_URL = "http://localhost:3000";
 const PROD_BASE_URL = "/api";
 
 export const axiosInstance = axios.create({
-  baseURL: import.meta.env.NODE_ENV === "prod" ? PROD_BASE_URL : DEV_BASE_URL,
+  baseURL: import.meta.env.MODE === "production" ? PROD_BASE_URL : DEV_BASE_URL,
   headers: { "Content-Type": "application/json" },
 });
 

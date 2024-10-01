@@ -20,12 +20,15 @@ services:
     container_name: cat-pinterest-api
     image: cat-pinterest-api
     build:
-      context: .
-      dockerfile: /api/Dockerfile
+      dockerfile: ./api/
     networks:
       - cat-pinterest-net
     environment:
       NODE_ENV: prod
+      POSTGRES_PASSWORD: 1
+      POSTGRES_USER: postgres
+      POSTGRES_DB: support_lk_db
+      POSTGRES_HOST: cat-pinterest-api-pg
     depends_on:
       cat-pinterest-api-pg:
         condition: service_healthy

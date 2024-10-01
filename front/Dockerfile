@@ -1,19 +1,20 @@
-FROM node AS vite-app
+FROM node as vite-app
 
-WORKDIR /app
-
+WORKDIR /app/client
 COPY . .
 
 RUN npm ci
-
 RUN npm run build
 
 FROM nginx:alpine
 
-RUN rm -rf /usr/share/nginx/html && mkdir /usr/share/nginx/html
+WORKDIR /usr/share/nginx/
 
-COPY ./nginx.conf /etc/nginx/nginx.conf
+RUN rm -rf html && mkdir html
 
-COPY --from=vite-app /app/dist /usr/share/nginx/html
+WORKDIR /
+
+COPY ./nginx.conf /etc/nginx
+COPY --from=vite-app ./app/client/dist /usr/share/nginx/html
 
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
