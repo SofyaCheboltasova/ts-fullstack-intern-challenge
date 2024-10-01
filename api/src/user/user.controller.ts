@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Inject,
   Post,
   Req,
   Res,
@@ -10,13 +11,13 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import UserDto from '../dto/user.dto';
-import UserService from '../../../backend/src/service/userService';
-import AuthGuard from 'src/guards/auth.guard';
+import { UserDto } from './dto/user.dto';
+import { UserService } from './user.service';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('user')
-export default class UserController {
-  constructor(private readonly userService: UserService) {}
+export class UserController {
+  constructor(@Inject(UserService) private userService: UserService) {}
   @Post()
   async create(@Body() userDto: UserDto, @Res() res: Response) {
     try {
