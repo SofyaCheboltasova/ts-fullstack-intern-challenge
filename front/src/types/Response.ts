@@ -1,6 +1,6 @@
-import CatType from "./CatType";
-import LikeType from "./LikeType";
-import UserType from "./UserType";
+import type CatType from "./CatType";
+import type LikeType from "./LikeType";
+import type UserType from "./UserType";
 
 export interface Response {
   error?: string;

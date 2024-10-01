@@ -18,7 +18,7 @@ export async function addLike(catId: string): Promise<LikeResponse> {
 
 export async function deleteLike(catId: string): Promise<void | Response> {
   setAuthHeaders();
-  const response = await axiosInstance.delete(`likes/${catId}`);
+  const response = await axiosInstance.delete(`/likes/${catId}`);
   if (response.status !== HttpStatusCode.Ok) {
     return { error: response.data.error };
   }
@@ -26,10 +26,9 @@ export async function deleteLike(catId: string): Promise<void | Response> {
 
 export async function getLikes(): Promise<LikeType[]> {
   setAuthHeaders();
-  const response = await axiosInstance.get("likes");
+  const response = await axiosInstance.get("/likes");
   if (response.status === HttpStatusCode.Ok) {
     return response.data;
   }
   return [];
 }
-
