@@ -1,23 +1,24 @@
-import { Repository } from "typeorm";
-import * as crypto from "crypto";
+import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import * as crypto from 'crypto';
 
-import dataSource from "../data-source";
-import User from "../entity/User";
-import UserDto from "../../../api/src/dto/user.dto";
+import { User } from './user.entity';
+import { UserDto } from './dto/user.dto';
 
-export default class UserService {
-  private repository: Repository<User>;
-
-  constructor() {
-    this.repository = dataSource.getRepository(User);
-  }
+@Injectable()
+export class UserService {
+  constructor(
+    @InjectRepository(User)
+    private repository: Repository<User>,
+  ) {}
 
   private generateSalt(length: number): string {
-    return crypto.randomBytes(length).toString("hex");
+    return crypto.randomBytes(length).toString('hex');
   }
 
   private generateAuthToken(login: string, salt: string): string {
-    return crypto.createHash("sha256").update(`${login}${salt}`).digest("hex");
+    return crypto.createHash('sha256').update(`${login}${salt}`).digest('hex');
   }
 
   public async compareTokens(id: number, token: string): Promise<boolean> {
@@ -32,7 +33,7 @@ export default class UserService {
     const userExists = await this.repository.findOne({ where: { id } });
 
     if (!userExists) {
-      throw new Error("Пользователя не существует");
+      throw new Error('Пользователя не существует');
     }
     return userExists;
   }
@@ -54,7 +55,7 @@ export default class UserService {
       const token = this.generateAuthToken(userExists.login, userExists.salt);
       return { user: userExists, token: token };
     } else {
-      throw new Error("Неправильный пароль");
+      throw new Error('Неправильный пароль');
     }
   }
 }

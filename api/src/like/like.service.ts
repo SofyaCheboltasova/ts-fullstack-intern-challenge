@@ -1,14 +1,16 @@
-import { Repository } from "typeorm";
-import dataSource from "../data-source";
-import Like from "../entity/Like";
-import LikeDto from "../../../api/src/dto/like.dto";
+import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
 
-export default class LikeService {
-  private repository: Repository<Like>;
+import { Like } from './like.entity';
+import { LikeDto } from './dto/like.dto';
 
-  constructor() {
-    this.repository = dataSource.getRepository(Like);
-  }
+@Injectable()
+export class LikeService {
+  constructor(
+    @InjectRepository(Like)
+    private repository: Repository<Like>,
+  ) {}
 
   public async getLikes(user_id: number): Promise<Like[] | []> {
     const likes = await this.repository.find({ where: { user_id } });
@@ -25,4 +27,3 @@ export default class LikeService {
     await this.repository.delete(likeId);
   }
 }
-
