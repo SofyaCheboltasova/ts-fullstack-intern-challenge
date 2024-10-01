@@ -1,6 +1,18 @@
+# Fixes
+
+1. Moved files from `/backend` to `/api`
+2. Changed `/api` structure. Created new modules: `cat`, `user`, `like`
+3. Refactored files' names: `UserService -> user.service.ts` etc.
+4. Add `TypeormModule.forRoot()` for connecting to db
+5. Fix injections in constructors
+6. Add env vars for dev / prod
+
+7. Moved API_KEY to github secrets
+8. Change dockerfiles && compose
+
 # Задание для TS FullStack стажёра
 
-Привет! 
+Привет!
 
 Если ты хочешь стать частью команды Учи.ру в рамках стажёрской программы,
 то тебе необходимо выполнить небольшое тестовое задание. Это нужно, что бы твои
@@ -25,6 +37,7 @@
 Проект (front-end и API) должен запускаться локально командой `docker compose up`.
 
 ### Front-end
+
 Дизайн лежит тут - https://bit.ly/3utxaL2
 
 - необходимо использовать React и TypeScript, остальные технологии опциональны

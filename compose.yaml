@@ -49,6 +49,7 @@ services:
       POSTGRES_PASSWORD: 1
       POSTGRES_USER: postgres
       POSTGRES_DB: support_lk_db
+      POSTGRES_HOST: cat-pinterest-api-pg
     #      PG_DATA: /var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
