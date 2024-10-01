@@ -1,16 +1,19 @@
 import { Module } from '@nestjs/common';
-import { CatModule } from './cat/cat.module';
 import { ConfigModule } from '@nestjs/config';
+import { env } from 'process';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { LikeModule } from './like/like.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { CatModule } from './cat/cat.module';
+import { UserModule } from './user/user.module';
+import { DatabaseModule } from './database/database.module';
 import { User } from './user/user.entity';
 import { Like } from './like/like.entity';
-import { UserModule } from './user/user.module';
-import { env } from 'process';
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    DatabaseModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: env.POSTGRES_HOST,
