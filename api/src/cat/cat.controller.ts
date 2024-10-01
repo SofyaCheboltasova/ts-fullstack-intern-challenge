@@ -10,7 +10,7 @@ import { Response } from 'express';
 import axios from 'axios';
 
 @Controller('cats')
-export default class CatController {
+export class CatController {
   private API_KEY: string =
     'live_wL1lhvBpxb7qz2jysRWt0Zib1HpKFUJLGjOIMaM5kSqaqRQanMUqGuvWWFSVNP5q';
 
